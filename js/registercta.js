@@ -77,7 +77,7 @@ jQuery(function ($) {
     cta = $('.signup-cta');
     cta.find('button.later').click(function () {
         ls.later();
-        cta.slideDown();
+        cta.slideUp();
     });
 
     if (ls.ask()) {
