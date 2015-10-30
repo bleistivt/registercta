@@ -1,12 +1,10 @@
 /*global jQuery, gdn*/
 
-jQuery(function ($) {
+;(function () {
     'use strict';
 
-    var ls, cta, id;
-
     // data model
-    ls = (function () {
+    var ls = (function () {
 
         var key = 'signup-cta',
             defaults = {
@@ -77,31 +75,36 @@ jQuery(function ($) {
 
     }());
 
-    
-    // We only need this for guests.
-    if (!gdn.definition('isGuest', false)) {
-        // Explicitly check for a valid session.
-        /*if (!gdn.definition('isGuest', true) === false) {
-            ls.never();
-        }*/
-        return;
-    }
+    // document.ready
+    jQuery(function ($) {
+        var cta, id;
 
-    cta = $('.signup-cta');
-    cta.find('button.later').click(function () {
-        ls.later();
-        cta.slideUp();
+        // We only need this for guests.
+        if (!gdn.definition('isGuest', false)) {
+            // Explicitly check for a valid session.
+            /*if (!gdn.definition('isGuest', true) === false) {
+                ls.never();
+            }*/
+            return;
+        }
+
+        cta = $('.signup-cta');
+        cta.find('button.later').click(function () {
+            ls.later();
+            cta.slideUp();
+        });
+
+        if (ls.ask()) {
+            cta.removeClass('Hidden');
+            $(document).trigger('signup-cta');
+        } else {
+            $(window).scroll(ls.scroll);
+            id = gdn.definition('DiscussionID', false);
+            if (id) {
+                ls.discussion(id);
+            }
+        }
+
     });
 
-    if (ls.ask()) {
-        cta.removeClass('Hidden');
-        $(document).trigger('signup-cta');
-    } else {
-        $(window).scroll(ls.scroll);
-        id = gdn.definition('DiscussionID', false);
-        if (id) {
-            ls.discussion(id);
-        }
-    }
-
-});
+}());
