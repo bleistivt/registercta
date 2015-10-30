@@ -3,11 +3,6 @@
 jQuery(function ($) {
     'use strict';
 
-    // We only need this for guests.
-    if (!gdn.definition('isGuest', false)) {
-        return;
-    }
-
     var ls, cta, id;
 
     // data model
@@ -16,6 +11,7 @@ jQuery(function ($) {
         var key = 'signup-cta',
             defaults = {
                 later: 0,
+                never: false,
                 scroll: 0,
                 discussions: []
             };
@@ -37,12 +33,14 @@ jQuery(function ($) {
         return {
             // Register user activity through scrolling (debounced to 30sec).
             scroll: (function () {
-                var timestamp = 0;
+                var timeout = false;
                 return function () {
-                    var now = Date.now();
-                    if (now - timestamp > 30000) {
-                        timestamp = now;
-                        set('scroll', get('scroll') + 1);
+                    if (!timeout) {
+                        timeout = true;
+                        setTimeout(function () {
+                            timeout = false;
+                            set('scroll', get('scroll') + 1);
+                        }, 30000);
                     }
                 };
             }()),
@@ -60,19 +58,34 @@ jQuery(function ($) {
             // Check if the call to action should be shown.
             ask: function () {
                 var data = get();
-                return data.scroll > 7 &&
+                return data.scroll > 6 &&
                         data.discussions.length > 2 &&
-                        Date.now() - data.later > 86400000;
+                        Date.now() - data.later > 86400000 &&
+                        !data.never;
             },
 
             // Ask me again (after a day has passed).
             later: function () {
                 set('later', Date.now());
+            },
+
+            // Never ask me again.
+            never: function () {
+                set('never', true);
             }
         };
 
     }());
 
+    
+    // We only need this for guests.
+    if (!gdn.definition('isGuest', false)) {
+        // Explicitly check for a valid session.
+        /*if (!gdn.definition('isGuest', true) === false) {
+            ls.never();
+        }*/
+        return;
+    }
 
     cta = $('.signup-cta');
     cta.find('button.later').click(function () {
