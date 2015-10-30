@@ -20,11 +20,16 @@ class RegisterCtaPlugin extends Gdn_Plugin {
     }
 
 
-    private $defaultMessage = 'Hey there!';
+    private $defaultMessage = "<b>Howdy, Stranger!</b>\n".
+        "It looks like you've been lurking for a while.\n\n".
+        "If you register, we also will remember what you have read and notify you about new comments. ".
+        "You will also be able to participate in discussions.\n\n".
+        "So if you'd like to get involved, register for an account, it'll only take you a minute!";
 
 
     private function message() {
-        return '<div class="DismissMessage CasualMessage signup-cta Hidden">'.
+        return Gdn::session()->isValid() ? '' :
+            '<div class="DismissMessage CasualMessage signup-cta Hidden">'.
             wrap(Gdn_Format::html(c('registercta.message', $this->defaultMessage)), 'p').
             anchor(t('Register'), 'entry/register', 'Button Primary').
             ' <button class="Button later">'.t('Ask me later').'</button>'.
