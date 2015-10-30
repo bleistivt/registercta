@@ -58,7 +58,7 @@ jQuery(function ($) {
             // Check if the call to action should be shown.
             ask: function () {
                 var data = get();
-                return data.scroll > 6 &&
+                return data.scroll > 5 &&
                         data.discussions.length > 2 &&
                         Date.now() - data.later > 86400000 &&
                         !data.never;
