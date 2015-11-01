@@ -18,7 +18,7 @@ class RegisterCtaPlugin extends Gdn_Plugin {
         parent::__construct();
         $this->defaultMessage = "<b>Howdy, Stranger!</b>\n".
             "It looks like you've been lurking for a while.\n\n".
-            "If you register, we also will remember what you have read and notify you about new comments. ".
+            "If you register, we will remember what you have read and notify you about new comments. ".
             "You will also be able to participate in discussions.\n\n".
             "So if you'd like to get involved, register for an account, it'll only take you a minute!";
     }
