@@ -1,17 +1,5 @@
 <?php
 
-$PluginInfo['registercta'] = [
-    'Name' => 'Register call to action',
-    'Description' => 'Displays a message in discussions asking users to register after reading for a while.',
-    'Version' => '0.1',
-    'Author' => 'Bleistivt',
-    'AuthorUrl' => 'http://bleistivt.net',
-    'SettingsPermission' => 'Garden.Settings.Manage',
-    'SettingsUrl' => 'settings/registercta',
-    'License' => 'GNU GPL2',
-    'MobileFriendly' => true
-];
-
 class RegisterCtaPlugin extends Gdn_Plugin {
 
     public function __construct() {
@@ -63,7 +51,6 @@ class RegisterCtaPlugin extends Gdn_Plugin {
 
     public function settingsController_registerCta_create($sender) {
         $sender->permission('Garden.Settings.Manage');
-        $sender->addSideMenu();
 
         $conf = new ConfigurationModule($sender);
         $conf->initialize([
