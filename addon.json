@@ -1,10 +1,11 @@
 {
     "name": "Register call to action",
     "description": "Displays a message in discussions asking users to register after reading for a while.",
-    "version": "0.1",
+    "version": "0.2",
     "settingsPermission": "Garden.Settings.Manage",
     "settingsUrl": "settings/registercta",
     "license": "GNU GPL2",
+    "gitHub": "bleistivt/registercta",
     "mobileFriendly": true,
     "key": "registercta",
     "type": "addon",
