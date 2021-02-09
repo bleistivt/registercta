@@ -21,29 +21,29 @@ class RegisterCtaPlugin extends Gdn_Plugin {
     private function message() {
         return Gdn::session()->isValid() ? '' :
             '<div class="DismissMessage CasualMessage signup-cta Hidden">'.
-            wrap(Gdn_Format::html(c('registercta.message', $this->defaultMessage)), 'p').
-            anchor(t('Register'), 'entry/register', 'Button Primary').
-            ' <button class="Button later">'.t('Ask me later').'</button>'.
+            wrap(Gdn_Format::html(Gdn::config('registercta.message', $this->defaultMessage)), 'p').
+            anchor(Gdn::translate('Register'), 'entry/register', 'Button Primary').
+            ' <button class="Button later">'.Gdn::translate('Ask me later').'</button>'.
             '</div>';
     }
 
 
     public function discussionController_beforeRenderAsset_handler($sender, $args) {
-        if (c('registercta.position', 'bottom') == 'top' && $args['AssetName'] == 'Content') {
+        if (Gdn::config('registercta.position', 'bottom') == 'top' && $args['AssetName'] == 'Content') {
             echo $this->message();
         }
     }
 
 
     public function discussionController_afterDiscussion_handler() {
-        if (c('registercta.position', 'bottom') == 'afterdiscussion') {
+        if (Gdn::config('registercta.position', 'bottom') == 'afterdiscussion') {
             echo $this->message();
         }
     }
 
 
     public function discussionController_afterComments_handler() {
-        if (c('registercta.position', 'bottom') == 'bottom') {
+        if (Gdn::config('registercta.position', 'bottom') == 'bottom') {
             echo $this->message();
         }
     }
@@ -72,7 +72,7 @@ class RegisterCtaPlugin extends Gdn_Plugin {
             ]
         ]);
 
-        $sender->title(sprintf(t('%s Settings'), 'Register call to action'));
+        $sender->title(sprintf(Gdn::translate('%s Settings'), 'Register call to action'));
         $conf->renderAll();
     }
 
