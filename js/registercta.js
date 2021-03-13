@@ -1,110 +1,120 @@
-/*global jQuery, gdn*/
+/*global gdn*/
 
-;(function () {
-    'use strict';
+(() => {
+    "use strict"
 
     // data model
-    var ls = (function () {
+    const model = (() => {
 
-        var key = 'signup-cta',
-            defaults = {
-                later: 0,
-                never: false,
-                scroll: 0,
-                discussions: []
-            };
-
-        function get(item) {
-            var data = JSON.parse(localStorage.getItem(key)) || defaults;
-            if (item !== undefined) {
-                return data[item];
-            }
-            return data;
+        const key = "signup-cta"
+        const defaults = {
+            later: 0,
+            never: false,
+            scroll: 0,
+            discussions: []
         }
 
-        function set(item, value) {
-            var data = get();
-            data[item] = value;
-            localStorage.setItem(key, JSON.stringify(data));
+        const get = (item) => {
+            const data = JSON.parse(localStorage.getItem(key)) || defaults
+            if (item !== undefined) {
+                return data[item]
+            }
+            return data
+        }
+
+        const set = (item, value) => {
+            const data = get()
+            data[item] = value
+            localStorage.setItem(key, JSON.stringify(data))
         }
 
         return {
             // Register user activity through scrolling (debounced to 30sec).
-            scroll: (function () {
-                var timeout = false;
-                return function () {
+            scroll: (() => {
+                let timeout = false
+                return () => {
                     if (!timeout) {
-                        timeout = true;
-                        setTimeout(function () {
-                            timeout = false;
-                            set('scroll', get('scroll') + 1);
-                        }, 30000);
+                        timeout = true
+                        setTimeout(() => {
+                            timeout = false
+                            set("scroll", get("scroll") + 1)
+                        }, 30000)
                     }
-                };
-            }()),
+                }
+            })(),
 
             // Register topics visited.
-            discussion: function (id) {
-                var ids = get('discussions');
+            discussion: (id) => {
+                const ids = get("discussions")
                 // Count unique discussions.
                 if (ids.indexOf(id) === -1) {
-                    ids.push(id);
-                    set('discussions', ids);
+                    ids.push(id)
+                    set("discussions", ids)
                 }
             },
 
             // Check if the call to action should be shown.
-            ask: function () {
-                var data = get();
+            ask: () => {
+                const data = get()
                 return data.scroll > 5 &&
                         data.discussions.length > 2 &&
                         Date.now() - data.later > 86400000 &&
-                        !data.never;
+                        !data.never
             },
 
             // Ask me again (after a day has passed).
-            later: function () {
-                set('later', Date.now());
+            later: () => {
+                set("later", Date.now())
             },
 
             // Never ask me again.
-            never: function () {
-                set('never', true);
+            never: () => {
+                set("never", true)
             }
-        };
+        }
 
-    }());
+    })()
+
+    ;
 
     // document.ready
-    jQuery(function ($) {
-        var cta, id;
-
+    ((callback) => {
+        if (["complete", "interactive"].includes(document.readyState)) {
+            setTimeout(callback, 0)
+        } else {
+            document.addEventListener("DOMContentLoaded", callback)
+        }
+    })(() => {
         // We only need this for guests.
-        if (!gdn.definition('isGuest', false)) {
+        if (!gdn.definition("isGuest", false)) {
             // Explicitly check for a valid session.
-            /*if (!gdn.definition('isGuest', true) === false) {
-                ls.never();
+            /*if (!gdn.definition("isGuest", true) === false) {
+                model.never()
             }*/
-            return;
+            return
         }
 
-        cta = $('.signup-cta');
-        cta.find('button.later').click(function () {
-            ls.later();
-            cta.slideUp();
-        });
+        const cta = document.querySelector(".signup-cta")
+        if (!cta) {
+            return
+        }
 
-        if (ls.ask()) {
-            cta.removeClass('Hidden');
-            $(document).trigger('signup-cta');
+        cta.querySelector("button.later").addEventListener("click", () => {
+            model.later()
+            cta.classList.add("Hidden")
+        })
+
+        if (model.ask()) {
+            cta.classList.remove("Hidden")
+            cta.dispatchEvent(new Event("signup-cta"))
         } else {
-            $(window).scroll(ls.scroll);
-            id = gdn.definition('DiscussionID', false);
+            document.addEventListener("scroll", model.scroll)
+            const id = gdn.definition("DiscussionID", false)
             if (id) {
-                ls.discussion(id);
+                model.discussion(id)
             }
         }
 
-    });
+    })
 
-}());
+})()
